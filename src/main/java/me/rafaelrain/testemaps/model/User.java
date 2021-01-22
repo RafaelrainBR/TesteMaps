@@ -1,21 +1,26 @@
 package me.rafaelrain.testemaps.model;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 import me.rafaelrain.testemaps.exception.UserValidationException;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Data
 @Entity
+@Table
+@ToString
+@SuperBuilder
+@NoArgsConstructor
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     private Long id;
 
     @Column(length = 64)
@@ -24,10 +29,10 @@ public class User {
     @Column(precision = 2)
     private double balance = 0;
 
-    @OneToMany(mappedBy = "owner")
-    private List<Asset> assets = new ArrayList<>();
+    @ElementCollection(fetch = FetchType.EAGER, targetClass = Integer.class)
+    private Map<Asset, Integer> assets = new HashMap<>();
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     private List<Transaction> transactions = new ArrayList<>();
 
     @CreationTimestamp

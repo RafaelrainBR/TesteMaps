@@ -1,6 +1,9 @@
 package me.rafaelrain.testemaps.model;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 import me.rafaelrain.testemaps.enums.AssetType;
 
 import javax.persistence.*;
@@ -8,9 +11,13 @@ import java.util.Date;
 
 @Data
 @Entity
+@Table
+@ToString
+@SuperBuilder
+@NoArgsConstructor
 public class Asset {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     private Long id;
 
     @Column(length = 64)
@@ -22,10 +29,6 @@ public class Asset {
     @Enumerated(EnumType.STRING)
     @Column(length = 8)
     private AssetType type;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn
-    private User owner;
 
     @Temporal(TemporalType.DATE)
     private Date emissionDate;

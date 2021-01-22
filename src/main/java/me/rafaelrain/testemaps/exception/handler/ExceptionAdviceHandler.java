@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 public class ExceptionAdviceHandler {
 
     @ExceptionHandler
-    public ResponseEntity handleException(UserValidationException e) {
+    public ResponseEntity<?> handleException(UserValidationException e) {
         return ResponseEntity
                 .status(HttpStatus.UNPROCESSABLE_ENTITY)
                 .body(e.getMessage());
