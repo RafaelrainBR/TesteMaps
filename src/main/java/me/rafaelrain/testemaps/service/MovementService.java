@@ -10,13 +10,16 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 
 @Service
 @RequiredArgsConstructor
 public class MovementService {
 
     private final UserService userService;
+    private final TransactionService transactionService;
 
     private static double roundDouble(double value) {
         final BigDecimal bg = new BigDecimal(value).setScale(2, RoundingMode.HALF_DOWN);
@@ -32,11 +35,11 @@ public class MovementService {
             throw new UserValidationException("Insufficient funds to buy.");
 
         final Transaction transaction = newTransaction(user, asset, amount, movementValue, date, TransactionType.OUTGOING);
+        transactionService.save(transaction);
 
-//        if(user.getAssets() == null) user.setAssets(new HashMap<>());
-//        if(user.getTransactions() == null) user.setTransactions(new ArrayList<>());
+        if (user.getAssets() == null) user.setAssets(new HashMap<>());
+        if (user.getTransactions() == null) user.setTransactions(new ArrayList<>());
 
-        // TODO: Resolver bug de deixar as collections do User como null.
         if (user.getAssets().containsKey(asset))
             amount += user.getAssets().get(asset);
 
@@ -56,6 +59,7 @@ public class MovementService {
             throw new UserValidationException("Insufficient assets to sell.");
 
         final Transaction transaction = newTransaction(user, asset, amount, movementValue, date, TransactionType.INCOME);
+        transactionService.save(transaction);
 
         if (assetsCount == amount) {
             user.getAssets().remove(asset);

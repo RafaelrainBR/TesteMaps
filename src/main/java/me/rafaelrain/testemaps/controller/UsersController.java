@@ -2,6 +2,7 @@ package me.rafaelrain.testemaps.controller;
 
 import lombok.RequiredArgsConstructor;
 import me.rafaelrain.testemaps.model.User;
+import me.rafaelrain.testemaps.model.UserBody;
 import me.rafaelrain.testemaps.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -10,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/users")
 @RequiredArgsConstructor
 public class UsersController {
 
@@ -29,17 +30,22 @@ public class UsersController {
     }
 
     @PostMapping
-    public ResponseEntity<?> createNew(@RequestBody User user) {
-        return ResponseEntity.ok(service.save(user));
+    public ResponseEntity<?> createNew(@RequestBody UserBody body) {
+        return ResponseEntity.ok(service.save(body.toUser()));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User user) {
-        if (!service.findById(id).isPresent()) {
+    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody UserBody body) {
+        final Optional<User> optionalUser = service.findById(id);
+        if (!optionalUser.isPresent()) {
             return ResponseEntity.notFound().build();
         }
 
-        user.validate();
+        body.validate();
+
+        final User user = optionalUser.get();
+        if (body.getName() != null) user.setName(body.getName());
+        if (body.getBalance() != null) user.setBalance(body.getBalance());
 
         return ResponseEntity.ok(service.save(user));
     }
