@@ -45,7 +45,9 @@ public class MovementService {
 
         user.getAssets().put(asset, amount);
         user.getTransactions().add(transaction);
+
         user.setBalance(newBalance);
+        transaction.setNewBalance(newBalance);
 
         userService.save(user);
     }
@@ -68,7 +70,10 @@ public class MovementService {
         }
 
         user.getTransactions().add(transaction);
-        user.setBalance(user.getBalance() + movementValue);
+
+        double newBalance = user.getBalance() + movementValue;
+        user.setBalance(newBalance);
+        transaction.setNewBalance(newBalance);
 
         userService.save(user);
     }

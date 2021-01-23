@@ -31,7 +31,7 @@ public class User {
     @ElementCollection(fetch = FetchType.EAGER)
     private Map<Asset, Integer> assets = new HashMap<>();
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<Transaction> transactions = new ArrayList<>();
 
     @CreationTimestamp

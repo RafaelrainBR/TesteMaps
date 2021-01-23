@@ -1,5 +1,6 @@
 package me.rafaelrain.testemaps.integration;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import me.rafaelrain.testemaps.model.User;
 import me.rafaelrain.testemaps.model.UserBody;
@@ -10,9 +11,11 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -35,6 +38,7 @@ public class UserRoutesTest {
     @Test
     public void findUsers_thenReturnsOk() throws Exception {
         final User user = createNewUser();
+        System.out.println("user = " + user);
 
         final List<User> users = userRepository.findAll();
 
@@ -67,15 +71,21 @@ public class UserRoutesTest {
 
     @Test
     public void createUser_thenReturnsOk() throws Exception {
-        final User user = getDummyUser();
+        final UserBody body = new UserBody("user only for tests", 6546D);
 
-        mockMvc.perform(post("/users")
+        final MvcResult result = mockMvc.perform(post("/users")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .accept(MediaType.APPLICATION_JSON_VALUE)
-                .content(objectMapper.writeValueAsString(user)))
+                .content(objectMapper.writeValueAsString(body)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name").value(user.getName()))
-                .andExpect(jsonPath("$.balance").value(user.getBalance()));
+                .andExpect(jsonPath("$.name").value(body.getName()))
+                .andExpect(jsonPath("$.balance").value(body.getBalance()))
+                .andReturn();
+
+        final JsonNode jsonNode = objectMapper.readTree(result.getResponse().getContentAsString());
+        Long id = jsonNode.get("id").asLong();
+
+        userRepository.deleteById(id);
     }
 
     @Test
@@ -104,6 +114,8 @@ public class UserRoutesTest {
 
         mockMvc.perform(delete("/users/" + user.getId()))
                 .andExpect(status().isOk());
+
+        assertFalse(userRepository.findById(user.getId()).isPresent());
     }
 
 

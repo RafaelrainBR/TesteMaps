@@ -24,6 +24,7 @@ public class Transaction {
 
     private String description;
     private double value;
+    private double newBalance;
 
     @ManyToOne(optional = false)
     private User user;
