@@ -10,13 +10,9 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/assets")
+@RequestMapping("/assets")
 @RequiredArgsConstructor
 public class AssetsController {
-    //TODO: Manutenção de ativos - compra, venda, consulta
-    //TODO: refletir compra e venda na conta corrente
-    //TODO: fazer verificação pra ver se a conta tem o ativo pra nao ficar negativo.
-    //TODO: Valor deve ser o do request, e não necessariamente o preço atual.
     private final AssetService service;
 
     @GetMapping

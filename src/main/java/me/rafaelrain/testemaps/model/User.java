@@ -4,7 +4,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
-import me.rafaelrain.testemaps.exception.UserValidationException;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -27,12 +26,12 @@ public class User {
     private String name;
 
     @Column(precision = 2)
-    private double balance = 0;
+    private Double balance = 0D;
 
-    @ElementCollection(fetch = FetchType.EAGER, targetClass = Integer.class)
+    @ElementCollection(fetch = FetchType.EAGER)
     private Map<Asset, Integer> assets = new HashMap<>();
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     private List<Transaction> transactions = new ArrayList<>();
 
     @CreationTimestamp
@@ -41,8 +40,4 @@ public class User {
     @UpdateTimestamp
     private Date updatedAt;
 
-    public void validate() throws UserValidationException {
-        if (balance < 0)
-            throw new UserValidationException("balance cannot be negative.");
-    }
 }
