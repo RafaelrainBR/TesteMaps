@@ -1,5 +1,6 @@
 package me.rafaelrain.testemaps.model;
 
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -35,4 +36,25 @@ public class Asset {
 
     @Temporal(TemporalType.DATE)
     private Date expirationDate;
+
+
+    @Data
+    @Builder
+    public static class Body {
+        private String name;
+        private Double price;
+        private AssetType type;
+        private Date emissionDate;
+        private Date expirationDate;
+
+        public Asset toAsset() {
+            return Asset.builder()
+                    .name(name)
+                    .marketPrice(price)
+                    .type(type)
+                    .emissionDate(emissionDate)
+                    .expirationDate(expirationDate)
+                    .build();
+        }
+    }
 }

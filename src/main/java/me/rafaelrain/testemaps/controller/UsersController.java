@@ -2,7 +2,6 @@ package me.rafaelrain.testemaps.controller;
 
 import lombok.RequiredArgsConstructor;
 import me.rafaelrain.testemaps.model.User;
-import me.rafaelrain.testemaps.model.UserBody;
 import me.rafaelrain.testemaps.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,12 +29,12 @@ public class UsersController {
     }
 
     @PostMapping
-    public ResponseEntity<?> createNew(@RequestBody UserBody body) {
+    public ResponseEntity<?> createNew(@RequestBody User.Body body) {
         return ResponseEntity.ok(service.save(body.toUser()));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody UserBody body) {
+    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User.Body body) {
         final Optional<User> optionalUser = service.findById(id);
         if (!optionalUser.isPresent()) {
             return ResponseEntity.notFound().build();

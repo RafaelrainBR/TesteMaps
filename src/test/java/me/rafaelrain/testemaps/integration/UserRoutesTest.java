@@ -3,7 +3,6 @@ package me.rafaelrain.testemaps.integration;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import me.rafaelrain.testemaps.model.User;
-import me.rafaelrain.testemaps.model.UserBody;
 import me.rafaelrain.testemaps.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,14 +31,8 @@ public class UserRoutesTest {
     private UserRepository userRepository;
 
     @Test
-    void contextLoads() {
-    }
-
-    @Test
     public void findUsers_thenReturnsOk() throws Exception {
         final User user = createNewUser();
-        System.out.println("user = " + user);
-
         final List<User> users = userRepository.findAll();
 
         mockMvc.perform(get("/users")
@@ -71,7 +64,7 @@ public class UserRoutesTest {
 
     @Test
     public void createUser_thenReturnsOk() throws Exception {
-        final UserBody body = new UserBody("user only for tests", 6546D);
+        final User.Body body = new User.Body("user only for tests", 6546D);
 
         final MvcResult result = mockMvc.perform(post("/users")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -83,7 +76,7 @@ public class UserRoutesTest {
                 .andReturn();
 
         final JsonNode jsonNode = objectMapper.readTree(result.getResponse().getContentAsString());
-        Long id = jsonNode.get("id").asLong();
+        final Long id = jsonNode.get("id").asLong();
 
         userRepository.deleteById(id);
     }
@@ -95,7 +88,7 @@ public class UserRoutesTest {
         final String newName = "newname";
         final double newBalance = 489198;
 
-        final UserBody body = new UserBody(newName, newBalance);
+        final User.Body body = new User.Body(newName, newBalance);
 
         mockMvc.perform(put("/users/" + user.getId())
                 .contentType(MediaType.APPLICATION_JSON_VALUE)

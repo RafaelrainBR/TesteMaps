@@ -28,15 +28,23 @@ public class AssetsController {
     }
 
     @PostMapping
-    public ResponseEntity<?> createNew(@RequestBody Asset asset) {
-        return ResponseEntity.ok(service.save(asset));
+    public ResponseEntity<?> createNew(@RequestBody Asset.Body body) {
+        return ResponseEntity.ok(service.save(body.toAsset()));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Asset> updateAsset(@PathVariable Long id, @RequestBody Asset asset) {
-        if (!service.findById(id).isPresent()) {
+    public ResponseEntity<Asset> updateAsset(@PathVariable Long id, @RequestBody Asset.Body body) {
+        final Optional<Asset> optionalAsset = service.findById(id);
+        if (!optionalAsset.isPresent()) {
             return ResponseEntity.notFound().build();
         }
+
+        final Asset asset = optionalAsset.get();
+        if (body.getName() != null) asset.setName(body.getName());
+        if (body.getPrice() != null) asset.setMarketPrice(body.getPrice());
+        if (body.getType() != null) asset.setType(body.getType());
+        if (body.getEmissionDate() != null) asset.setEmissionDate(body.getEmissionDate());
+        if (body.getExpirationDate() != null) asset.setExpirationDate(body.getExpirationDate());
 
         return ResponseEntity.ok(service.save(asset));
     }
