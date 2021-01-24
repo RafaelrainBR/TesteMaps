@@ -42,7 +42,7 @@ public class MovementController {
 
     @GetMapping("/sell")
     public ResponseEntity<?> movementSell(
-            @RequestParam(name = "userId") Long userId,
+            @RequestParam(name = "user_id") Long userId,
             @RequestParam(name = "asset_id") Long assetId,
             @RequestParam(name = "amount") int amount,
             @RequestParam(name = "value") double value,

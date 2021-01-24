@@ -34,7 +34,7 @@ public class MovementService {
         if (newBalance < 0)
             throw new UserValidationException("Insufficient funds to buy.");
 
-        final Transaction transaction = newTransaction(user, asset, amount, movementValue, date, TransactionType.OUTGOING);
+        final Transaction transaction = newTransaction(user, asset, amount, movementValue, date, TransactionType.INCOME);
         transactionService.save(transaction);
 
         if (user.getAssets() == null) user.setAssets(new HashMap<>());
@@ -60,7 +60,7 @@ public class MovementService {
         if (assetsCount == null || assetsCount < amount)
             throw new UserValidationException("Insufficient assets to sell.");
 
-        final Transaction transaction = newTransaction(user, asset, amount, movementValue, date, TransactionType.INCOME);
+        final Transaction transaction = newTransaction(user, asset, amount, movementValue, date, TransactionType.OUTGOING);
         transactionService.save(transaction);
 
         if (assetsCount == amount) {
@@ -88,7 +88,7 @@ public class MovementService {
                 .type(type)
                 .description(
                         String.format("%s %d %s for R$%.2f",
-                                type == TransactionType.INCOME ? "Sold" : "Bought",
+                                type == TransactionType.INCOME ? "Bought" : "Sold",
                                 amount, asset.getName(), movementValue)
                 )
                 .build();

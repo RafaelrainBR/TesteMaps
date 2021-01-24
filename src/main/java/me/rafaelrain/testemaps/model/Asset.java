@@ -6,9 +6,12 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import me.rafaelrain.testemaps.enums.AssetType;
+import me.rafaelrain.testemaps.enums.MovementType;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @Data
 @Entity
@@ -27,9 +30,14 @@ public class Asset {
     @Column(precision = 8)
     private double marketPrice;
 
+    private int initialCount;
+
     @Enumerated(EnumType.STRING)
     @Column(length = 8)
     private AssetType type;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    private Map<MovementType, Integer> history = new HashMap<>();
 
     @Temporal(TemporalType.DATE)
     private Date emissionDate;
