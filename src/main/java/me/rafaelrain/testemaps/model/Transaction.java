@@ -1,5 +1,6 @@
 package me.rafaelrain.testemaps.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -26,10 +27,12 @@ public class Transaction {
     private double value;
     private double newBalance;
 
-    @ManyToOne(optional = false)
+    @JsonIgnore
+    @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private User user;
 
-    @ManyToOne
+    @JsonIgnore
+    @ManyToOne(optional = true, fetch = FetchType.EAGER)
     private Asset asset;
 
     @Enumerated

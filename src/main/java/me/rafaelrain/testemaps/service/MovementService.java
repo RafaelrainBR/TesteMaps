@@ -26,7 +26,7 @@ public class MovementService {
         return bg.doubleValue();
     }
 
-    public void buyAssets(User user, Asset asset, int amount, double movementValue, Date date) throws UserValidationException {
+    public Transaction buyAssets(User user, Asset asset, int amount, double movementValue, Date date) throws UserValidationException {
         checkDate(asset, date);
         movementValue = roundDouble(movementValue);
 
@@ -35,7 +35,6 @@ public class MovementService {
             throw new UserValidationException("Insufficient funds to buy.");
 
         final Transaction transaction = newTransaction(user, asset, amount, movementValue, date, TransactionType.INCOME);
-        transactionService.save(transaction);
 
         if (user.getAssets() == null) user.setAssets(new HashMap<>());
         if (user.getTransactions() == null) user.setTransactions(new ArrayList<>());
@@ -50,9 +49,10 @@ public class MovementService {
         transaction.setNewBalance(newBalance);
 
         userService.save(user);
+        return transaction;
     }
 
-    public void sellAssets(User user, Asset asset, int amount, double movementValue, Date date) {
+    public Transaction sellAssets(User user, Asset asset, int amount, double movementValue, Date date) {
         checkDate(asset, date);
         movementValue = roundDouble(movementValue);
 
@@ -61,7 +61,6 @@ public class MovementService {
             throw new UserValidationException("Insufficient assets to sell.");
 
         final Transaction transaction = newTransaction(user, asset, amount, movementValue, date, TransactionType.OUTGOING);
-        transactionService.save(transaction);
 
         if (assetsCount == amount) {
             user.getAssets().remove(asset);
@@ -76,22 +75,25 @@ public class MovementService {
         transaction.setNewBalance(newBalance);
 
         userService.save(user);
+        return transaction;
     }
 
     private Transaction newTransaction(User user, Asset asset, int amount, double movementValue, Date date, TransactionType type) {
-        return Transaction
-                .builder()
-                .user(user)
-                .asset(asset)
-                .date(date)
-                .value(movementValue)
-                .type(type)
-                .description(
-                        String.format("%s %d %s for R$%.2f",
-                                type == TransactionType.INCOME ? "Bought" : "Sold",
-                                amount, asset.getName(), movementValue)
-                )
-                .build();
+        return transactionService.save(
+                Transaction
+                        .builder()
+                        .user(user)
+                        .asset(asset)
+                        .date(date)
+                        .value(movementValue)
+                        .type(type)
+                        .description(
+                                String.format("%s %d %s for R$%.2f",
+                                        type == TransactionType.INCOME ? "Bought" : "Sold",
+                                        amount, asset.getName(), movementValue)
+                        )
+                        .build()
+        );
     }
 
     private void checkDate(Asset asset, Date date) throws UserValidationException {

@@ -42,6 +42,16 @@ public class User {
     @UpdateTimestamp
     private Date updatedAt;
 
+    public int getAssetsCount(Long countId) {
+        for (Map.Entry<Asset, Integer> entry : getAssets().entrySet()) {
+            Asset asset = entry.getKey();
+            if (asset.getId().equals(countId)) {
+                return entry.getValue();
+            }
+        }
+
+        return 0;
+    }
 
     @Data
     @AllArgsConstructor

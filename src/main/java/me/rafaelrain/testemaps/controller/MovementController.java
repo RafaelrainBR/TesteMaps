@@ -3,6 +3,7 @@ package me.rafaelrain.testemaps.controller;
 import lombok.RequiredArgsConstructor;
 import me.rafaelrain.testemaps.enums.MovementType;
 import me.rafaelrain.testemaps.model.Asset;
+import me.rafaelrain.testemaps.model.Transaction;
 import me.rafaelrain.testemaps.model.User;
 import me.rafaelrain.testemaps.service.AssetService;
 import me.rafaelrain.testemaps.service.MovementService;
@@ -30,12 +31,12 @@ public class MovementController {
 
     @GetMapping("/buy")
     public ResponseEntity<?> movementBuy(
-            @RequestParam(name = "userId") Long userId,
+            @RequestParam(name = "user_id") Long userId,
             @RequestParam(name = "asset_id") Long assetId,
-            @RequestParam(name = "amount") int amount,
-            @RequestParam(name = "value") double value,
+            @RequestParam int amount,
+            @RequestParam double value,
             @RequestParam
-            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date date
+            @DateTimeFormat(pattern = "dd-MM-yyyy") Date date
     ) {
         return processMovement(userId, assetId, amount, value, date, MovementType.BUY);
     }
@@ -47,7 +48,7 @@ public class MovementController {
             @RequestParam(name = "amount") int amount,
             @RequestParam(name = "value") double value,
             @RequestParam
-            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date date
+            @DateTimeFormat(pattern = "dd-MM-yyyy") Date date
     ) {
         return processMovement(userId, assetId, amount, value, date, MovementType.SELL);
     }
@@ -66,11 +67,12 @@ public class MovementController {
         }
         final Asset asset = optionalAsset.get();
 
+        Transaction transaction;
         if (type == MovementType.BUY)
-            movementService.buyAssets(user, asset, amount, value, date);
+            transaction = movementService.buyAssets(user, asset, amount, value, date);
         else
-            movementService.sellAssets(user, asset, amount, value, date);
+            transaction = movementService.sellAssets(user, asset, amount, value, date);
 
-        return ResponseEntity.ok(user);
+        return ResponseEntity.ok(transaction);
     }
 }

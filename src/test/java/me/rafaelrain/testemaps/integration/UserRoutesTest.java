@@ -1,19 +1,19 @@
 package me.rafaelrain.testemaps.integration;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import me.rafaelrain.testemaps.model.User;
 import me.rafaelrain.testemaps.repository.UserRepository;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.List;
 
+import static me.rafaelrain.testemaps.util.TestUtil.createNewUser;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -32,28 +32,23 @@ public class UserRoutesTest {
 
     @Test
     public void findUsers_thenReturnsOk() throws Exception {
-        final User user = createNewUser();
         final List<User> users = userRepository.findAll();
 
         mockMvc.perform(get("/users")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().string(objectMapper.writeValueAsString(users)))
                 .andExpect(status().isOk());
-
-        userRepository.deleteById(user.getId());
     }
 
     @Test
     public void searchUser_thenReturnsOk() throws Exception {
-        final User user = createNewUser();
+        final User user = createNewUser(userRepository);
 
         mockMvc.perform(get("/users/" + user.getId())
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value(user.getName()))
                 .andExpect(jsonPath("$.balance").value(user.getBalance()));
-
-        userRepository.deleteById(user.getId());
     }
 
     @Test
@@ -66,24 +61,18 @@ public class UserRoutesTest {
     public void createUser_thenReturnsOk() throws Exception {
         final User.Body body = new User.Body("user only for tests", 6546D);
 
-        final MvcResult result = mockMvc.perform(post("/users")
+        mockMvc.perform(post("/users")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .accept(MediaType.APPLICATION_JSON_VALUE)
                 .content(objectMapper.writeValueAsString(body)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value(body.getName()))
-                .andExpect(jsonPath("$.balance").value(body.getBalance()))
-                .andReturn();
-
-        final JsonNode jsonNode = objectMapper.readTree(result.getResponse().getContentAsString());
-        final Long id = jsonNode.get("id").asLong();
-
-        userRepository.deleteById(id);
+                .andExpect(jsonPath("$.balance").value(body.getBalance()));
     }
 
     @Test
     public void updateUser_thenReturnsOk() throws Exception {
-        final User user = createNewUser();
+        final User user = createNewUser(userRepository);
 
         final String newName = "newname";
         final double newBalance = 489198;
@@ -97,13 +86,11 @@ public class UserRoutesTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value(newName))
                 .andExpect(jsonPath("$.balance").value(newBalance));
-
-        userRepository.deleteById(user.getId());
     }
 
     @Test
     public void deleteUser_thenReturnsOk() throws Exception {
-        final User user = createNewUser();
+        final User user = createNewUser(userRepository);
 
         mockMvc.perform(delete("/users/" + user.getId()))
                 .andExpect(status().isOk());
@@ -112,14 +99,8 @@ public class UserRoutesTest {
     }
 
 
-    private User getDummyUser() {
-        return User.builder()
-                .name("User only for tests")
-                .balance(498D)
-                .build();
-    }
-
-    private User createNewUser() {
-        return userRepository.save(getDummyUser());
+    @AfterEach
+    public void deleteEach() {
+        userRepository.deleteById(26L);
     }
 }
