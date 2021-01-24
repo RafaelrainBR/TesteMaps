@@ -24,7 +24,6 @@ public class TestUtil {
 
     public static User getDummyUser() {
         return User.builder()
-                .id(26L)
                 .name("User only for tests")
                 .balance(498D)
                 .build();
@@ -45,8 +44,6 @@ public class TestUtil {
     }
 
     public static Asset createNewAsset(AssetRepository assetRepository) throws Exception {
-        final Asset asset = getDummyAsset().toAsset();
-        asset.setId(26L);
-        return assetRepository.save(asset);
+        return assetRepository.save(getDummyAsset().toAsset());
     }
 }

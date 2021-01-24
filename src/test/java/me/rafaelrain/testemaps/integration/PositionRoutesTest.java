@@ -1,6 +1,8 @@
 package me.rafaelrain.testemaps.integration;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import me.rafaelrain.testemaps.model.Asset;
+import me.rafaelrain.testemaps.model.Position;
 import me.rafaelrain.testemaps.model.User;
 import me.rafaelrain.testemaps.repository.AssetRepository;
 import me.rafaelrain.testemaps.repository.UserRepository;
@@ -11,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 
 import static me.rafaelrain.testemaps.util.TestUtil.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -19,9 +22,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class MovementRoutesTest {
+public class PositionRoutesTest {
     @Autowired
     private MockMvc mockMvc;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Autowired
     private UserRepository userRepository;
@@ -33,37 +39,22 @@ public class MovementRoutesTest {
     private MovementService movementService;
 
     @Test
-    public void buyAssets_thenReturnsOk() throws Exception {
-        final User user = createNewUser(userRepository);
-        final Asset asset = createNewAsset(assetRepository);
-
-        mockMvc.perform(get("/movement/buy")
-                .queryParam("user_id", String.valueOf(user.getId()))
-                .queryParam("asset_id", String.valueOf(asset.getId()))
-                .queryParam("amount", String.valueOf(18))
-                .queryParam("value", String.valueOf(235.132D))
-                .queryParam("date", "15-06-2021"))
-                .andExpect(status().isOk());
-    }
-
-    @Test
-    public void sellAssets_thenReturnsOk() throws Exception {
+    public void consultPosition_andReturnOk() throws Exception {
         User user = createNewUser(userRepository);
         final Asset asset = createNewAsset(assetRepository);
 
         movementService.buyAssets(user, asset, 18, 235.132D, getDateFrom("15-06-2021"));
 
-        mockMvc.perform(get("/movement/sell")
+        final MvcResult mvcResult = mockMvc.perform(get("/position")
                 .queryParam("user_id", String.valueOf(user.getId()))
-                .queryParam("asset_id", String.valueOf(asset.getId()))
-                .queryParam("amount", String.valueOf(17))
-                .queryParam("value", String.valueOf(235.132D))
-                .queryParam("date", "15-06-2021"))
-                .andExpect(status().isOk());
+                .queryParam("asset_id", String.valueOf(asset.getId())))
+                .andExpect(status().isOk())
+                .andReturn();
 
         user = userRepository.findById(user.getId()).get();
-        int assets = user.getAssetsCount(asset.getId());
-        assertEquals(1, assets);
+        final Position position = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), Position.class);
+
+        assertEquals(Position.of(user, asset), position);
     }
 
     @AfterEach
@@ -71,4 +62,5 @@ public class MovementRoutesTest {
         userRepository.deleteById(1L);
         assetRepository.deleteById(1L);
     }
+
 }

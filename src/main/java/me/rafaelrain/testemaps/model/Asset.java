@@ -21,7 +21,7 @@ import java.util.Map;
 @NoArgsConstructor
 public class Asset {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(length = 64)

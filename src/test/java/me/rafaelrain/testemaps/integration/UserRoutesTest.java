@@ -101,6 +101,6 @@ public class UserRoutesTest {
 
     @AfterEach
     public void deleteEach() {
-        userRepository.deleteById(26L);
+        userRepository.deleteById(1L);
     }
 }

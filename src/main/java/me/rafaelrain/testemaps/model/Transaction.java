@@ -20,7 +20,7 @@ import java.util.Date;
 @SuperBuilder
 public class Transaction {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String description;

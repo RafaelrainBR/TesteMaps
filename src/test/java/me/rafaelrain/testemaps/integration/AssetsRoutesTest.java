@@ -102,6 +102,6 @@ public class AssetsRoutesTest {
 
     @AfterEach
     public void deleteEach() {
-        assetRepository.deleteById(26L);
+        assetRepository.deleteById(1L);
     }
 }

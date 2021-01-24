@@ -1,6 +1,7 @@
 package me.rafaelrain.testemaps.model;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import me.rafaelrain.testemaps.enums.AssetType;
@@ -11,6 +12,7 @@ import java.util.stream.Collectors;
 
 @Data
 @RequiredArgsConstructor
+@EqualsAndHashCode
 public class Position {
     private final String name;
     private final AssetType type;

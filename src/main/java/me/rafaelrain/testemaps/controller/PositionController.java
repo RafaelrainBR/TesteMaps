@@ -23,7 +23,7 @@ public class PositionController {
     private final UserService userService;
     private final AssetService assetService;
 
-    @GetMapping("/")
+    @GetMapping
     public ResponseEntity<?> getPosition(
             @RequestParam(name = "user_id") Long userId,
             @RequestParam(name = "asset_id") Long assetId
