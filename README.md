@@ -59,7 +59,7 @@ _____
       "expirationDate": "21-09-2021"
     }
     ```
-  - Atualizar ação: `PUT http://localhost:8080/assets`
+  - Atualizar ação: `PUT http://localhost:8080/assets/26`
     - formato do body é o mesmo da rota acima.
   - Deletar ação por id: `DELETE http://localhost:8080/assets/22`
 - Usuários:
@@ -73,7 +73,7 @@ _____
       "balance": 2.02
     }
     ```
-  - Atualizar usuário: `PUT http://localhost:8080/users`
+  - Atualizar usuário: `PUT http://localhost:8080/users/26`
     - formato do body é o mesmo da rota acima.
   - Deletar usuário por id: `DELETE http://localhost:8080/users/22`
 - Movimentos:
