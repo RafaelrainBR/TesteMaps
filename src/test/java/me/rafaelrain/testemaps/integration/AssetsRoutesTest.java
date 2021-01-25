@@ -31,6 +31,8 @@ public class AssetsRoutesTest {
     @Autowired
     private AssetRepository assetRepository;
 
+    private Long lastId = 1L;
+
     @Test
     public void findAssets_thenReturnsOk() throws Exception {
         final List<Asset> assets = assetRepository.findAll();
@@ -50,6 +52,8 @@ public class AssetsRoutesTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value(asset.getName()))
                 .andExpect(jsonPath("$.marketPrice").value(asset.getMarketPrice()));
+
+	lastId = asset.getId();
     }
 
     @Test
@@ -102,6 +106,10 @@ public class AssetsRoutesTest {
 
     @AfterEach
     public void deleteEach() {
-        assetRepository.deleteById(1L);
+	try {
+            assetRepository.deleteById(lastId);
+	} catch(Exception e){
+	    //ignore
+        }
     }
 }
