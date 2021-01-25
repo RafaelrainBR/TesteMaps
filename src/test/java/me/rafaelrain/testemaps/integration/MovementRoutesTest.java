@@ -1,23 +1,31 @@
 package me.rafaelrain.testemaps.integration;
 
+import me.rafaelrain.testemaps.TesteMapsApplication;
+import me.rafaelrain.testemaps.config.JpaConfig;
 import me.rafaelrain.testemaps.model.Asset;
 import me.rafaelrain.testemaps.model.User;
 import me.rafaelrain.testemaps.repository.AssetRepository;
 import me.rafaelrain.testemaps.repository.UserRepository;
 import me.rafaelrain.testemaps.service.MovementService;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+
+import javax.transaction.Transactional;
 
 import static me.rafaelrain.testemaps.util.TestUtil.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
+@SpringBootTest(classes = {
+        TesteMapsApplication.class,
+        JpaConfig.class})
+@Transactional
+@ActiveProfiles("test")
 @AutoConfigureMockMvc
 public class MovementRoutesTest {
     @Autowired
@@ -64,11 +72,5 @@ public class MovementRoutesTest {
         user = userRepository.findById(user.getId()).get();
         int assets = user.getAssetsCount(asset.getId());
         assertEquals(1, assets);
-    }
-
-    @AfterEach
-    public void deleteEach() {
-        userRepository.deleteById(1L);
-        assetRepository.deleteById(1L);
     }
 }

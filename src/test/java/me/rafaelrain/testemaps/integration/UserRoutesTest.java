@@ -1,16 +1,19 @@
 package me.rafaelrain.testemaps.integration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import me.rafaelrain.testemaps.TesteMapsApplication;
+import me.rafaelrain.testemaps.config.JpaConfig;
 import me.rafaelrain.testemaps.model.User;
 import me.rafaelrain.testemaps.repository.UserRepository;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 import static me.rafaelrain.testemaps.util.TestUtil.createNewUser;
@@ -18,7 +21,11 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SpringBootTest
+@SpringBootTest(classes = {
+        TesteMapsApplication.class,
+        JpaConfig.class})
+@Transactional
+@ActiveProfiles("test")
 @AutoConfigureMockMvc
 public class UserRoutesTest {
     @Autowired
@@ -96,11 +103,5 @@ public class UserRoutesTest {
                 .andExpect(status().isOk());
 
         assertFalse(userRepository.findById(user.getId()).isPresent());
-    }
-
-
-    @AfterEach
-    public void deleteEach() {
-        userRepository.deleteById(1L);
     }
 }
