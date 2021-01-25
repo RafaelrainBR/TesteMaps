@@ -68,4 +68,18 @@ _____
   - Atualizar usuário: `PUT http://localhost:8080/users`
     - formato do body é o mesmo da rota acima.
   - Deletar usuário por id: `DELETE http://localhost:8080/users/22`
-   
+- Movimentos:
+  - Requisitar Compra de ação: `GET http://localhost:8080/movement/buy`
+    - Parametros Query: `user_id`, `asset_id`, `amount`, `value`, `date`
+    - user_id: Id do usuário. Exemplo: 65
+    - asset_id: Id da ação. Exemplo: 26
+    - amount: Quantidade de ações à comprar. Exemplo: 12
+    - value: Valor de compra. Exemplo: 4681.0234
+    - date: Data na qual será feita a movimentação. Exemplo: 04-03-2022
+  - Requisitar Venda de ação: `GET http://localhost:8080/movement/sell`
+    - Formato é o mesmo da rota acima.
+- Posição:
+  - Requisitar posição de uma ação de um usuário: `GET http://localhost:8080/position`
+    - Parametros Query: `user_id`, `asset_id`.
+    - user_id: Id do usuário. Exemplo: 65
+    - asset_id: Id da ação. Exemplo: 26
