@@ -51,3 +51,21 @@ _____
       "expirationDate": "21-09-2021"
     }
     ```
+  - Atualizar ação: `PUT http://localhost:8080/assets`
+    - formato do body é o mesmo da rota acima.
+  - Deletar ação por id: `DELETE http://localhost:8080/assets/22`
+- Usuários:
+  - Requisitar todas os usuários: `GET http://localhost:8080/users`
+  - Requisitar usuário por id: `GET http://localhost:8080/users/15`
+  - Criar novo usuário: `POST http://localhost:8080/users`
+    - exemplo de body:
+    ```json
+    {
+      "name": "Dilma Bolsonaro",
+      "balance": 2.02
+    }
+    ```
+  - Atualizar usuário: `PUT http://localhost:8080/users`
+    - formato do body é o mesmo da rota acima.
+  - Deletar usuário por id: `DELETE http://localhost:8080/users/22`
+   
